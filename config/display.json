@@ -1,0 +1,10 @@
+{
+    "color_max": {
+        "type": "int",
+        "value": 20
+    },
+    "color_min": {
+        "type": "int",
+        "value": -40
+    }
+}

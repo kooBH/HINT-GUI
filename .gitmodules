@@ -1,0 +1,18 @@
+[submodule "lib/KJsonConfig"]
+	path = lib/KJsonConfig
+	url = https://github.com/koobh/KJsonConfig
+[submodule "lib/KSpecStream"]
+	path = lib/KSpecStream
+	url = https://github.com/koobh/KSpecStream
+[submodule "lib/RtAudioWrapper"]
+	path = lib/RtAudioWrapper
+	url = https://github.com/koobh/RtAudioWrapper
+[submodule "lib/STFT"]
+	path = lib/STFT
+	url = https://github.com/koobh/STFT
+[submodule "bin"]
+	path = bin
+	url = https://github.com/kooBH/QtBin.git
+[submodule "lib/WAV"]
+	path = lib/WAV
+	url = https://github.com/koobh/WAV
