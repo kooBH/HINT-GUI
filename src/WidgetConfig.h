@@ -16,10 +16,15 @@ class WidgetConfig : public QWidget{
   Q_OBJECT
 
 private:
+  QFont font_device;
+
   QHBoxLayout layout_main;
   KJsonConfig widget_config;
   QVBoxLayout layout_audio;
+
+  QHBoxLayout layout_btn;
   QPushButton btn_audioprobe;
+  QPushButton btn_apply;
   QTextBrowser TB_audio;
 
   map<string, unsigned int> map_device;
@@ -36,6 +41,8 @@ public:
   void Add(QString name, string path) {
     widget_config.Add(name, path);
   }
+
+  QPushButton* GetButtonApply();
 
 public slots:
   void slot_audioprobe();

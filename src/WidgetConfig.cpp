@@ -3,11 +3,23 @@
 WidgetConfig::WidgetConfig() {
   setLayout(&layout_main);
 
+
+
   layout_main.addLayout(&layout_audio);
 
   btn_audioprobe.setText("AudioProbe");
-  layout_audio.addWidget(&btn_audioprobe);
+  layout_btn.addWidget(&btn_audioprobe);
+
+  btn_apply.setText("Apply");
+  layout_btn.addWidget(&btn_apply);
+
+  layout_audio.addLayout(&layout_btn);
+
+  font_device.setFamily(QStringLiteral(u"Malgun Gothic"));
+  font_device.setPointSize(12);
+  TB_audio.setFont(font_device);
   layout_audio.addWidget(&TB_audio);
+
 
   layout_main.addWidget(&widget_config);
 
@@ -25,7 +37,7 @@ void WidgetConfig::slot_audioprobe() {
 
   map_device.clear();
 
-  text_device = " *** Device List *** \n\n";
+  text_device = " *** Output Device List *** \n";
   // Create an api map.
   std::map<int, std::string> apiMap;
   apiMap[RtAudio::MACOSX_CORE] = "OS-X Core Audio";
@@ -52,6 +64,10 @@ void WidgetConfig::slot_audioprobe() {
   /* Create Widgets */
   for (unsigned int i = 0; i < devices; i++) {
     info = audio.getDeviceInfo(i);
+
+    if (info.outputChannels == 0)
+      continue;
+
     QString temp_device = "[";
     temp_device.append(QString::fromStdString(to_string(i)));
     temp_device.append("]");
@@ -72,26 +88,9 @@ void WidgetConfig::slot_audioprobe() {
     else {
       //  std::cout << "Probe Status = Successful\n";
       text_device.append("Output Channels = ");
-      text_device.append(
-        QString::fromStdString(to_string(info.outputChannels)));
-      text_device.append("\nInput Channels = ");
-      text_device.append(
-        QString::fromStdString(to_string(info.inputChannels)));
+      text_device.append(QString::fromStdString(to_string(info.outputChannels)));
+      text_device.append("\n");
 
-      text_device.append("\n");
-      if (info.sampleRates.size() < 1) {
-        text_device.append("No supported sample rates found!");
-      }
-      else {
-        text_device.append("Supported sample rates = ");
-        for (unsigned int j = 0; j < info.sampleRates.size(); j++) {
-          text_device.append(QString::fromStdString(
-            to_string(info.sampleRates[j])
-          ));
-          text_device.append(" ");
-        }
-      }
-      text_device.append("\n");
     }
     text_device.append("\n");
   }
@@ -100,3 +99,7 @@ void WidgetConfig::slot_audioprobe() {
   TB_audio.setText(text_device);
 }
 
+
+QPushButton* WidgetConfig::GetButtonApply() {
+  return &btn_apply;
+}

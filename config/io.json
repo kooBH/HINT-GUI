@@ -1,19 +1,19 @@
 {
+    "clean_speaker": {
+        "type": "int",
+        "value": 6
+    },
     "input_channels": {
         "type": "int",
         "value": 2
     },
-    "input_device": {
-        "type": "int",
-        "value": 11
-    },
-    "multiple": {
-        "type": "int",
-        "value": 5
-    },
-    "output_device": {
+    "noise1_speaker": {
         "type": "int",
         "value": 0
+    },
+    "noise2_speaker": {
+        "type": "int",
+        "value": 4
     },
     "samplerate": {
         "options": [
