@@ -57,6 +57,7 @@ private:
   vector<std::unique_ptr<QPushButton>> vec_btn_answer;
   void update_answer();
 
+  QFrame frame_line;
   
   QGroupBox group_score;
   QVBoxLayout layout_score;
@@ -68,9 +69,18 @@ private:
   QVBoxLayout layout_right;
   QHBoxLayout layout_SNR; 
   QLabel label_SNR;
-  QLineEdit edit_SNR;
   QLabel label_dB;
   bool flag_play_tune = false;
+
+  QHBoxLayout layout_dB_clean;
+  QLabel label_dB_clean;
+  QPushButton btn_dB_clean_up, btn_dB_clean_down;
+  QLabel label_dB_noise1;
+  QHBoxLayout layout_dB_noise1;
+  QPushButton btn_dB_noise1_up, btn_dB_noise1_down;
+  double dB_clean = 0.0;
+  double dB_noise1 = 0.0;
+
   QHBoxLayout layout_tune;
   QPushButton btn_tune;
   void init_right();
@@ -80,6 +90,7 @@ public:
   ~WidgetControl();
 
   void ConnectPlayer(Player* p);
+  void EnableControl(bool flag);
 
 signals :
   void Play(QString path);

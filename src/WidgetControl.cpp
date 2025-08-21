@@ -3,6 +3,7 @@
 
 WidgetControl::WidgetControl(){
   layout_main.setAlignment(Qt::AlignTop);
+  layout_main.setSpacing(20);
 
   init_toolbar();
   layout_main.addLayout(&layout_toolbar);
@@ -11,6 +12,10 @@ WidgetControl::WidgetControl(){
   layout_main.addLayout(&layout_text);
   update_answer();
   layout_main.addLayout(&layout_answer);
+
+  frame_line.setFrameShape(QFrame::HLine);
+  frame_line.setFrameShadow(QFrame::Plain);
+  layout_main.addWidget(&frame_line);
 
   init_left();
   layout_two_col.addWidget(&group_score,1);
@@ -84,9 +89,36 @@ void WidgetControl::update_answer() {
   for (const QString& token : tokens) {
     auto btn = std::make_unique<QPushButton>();
     btn.get()->setText(token);
-    layout_answer.addWidget(btn.get());  
+    btn.get()->setCheckable(true);
+    layout_answer.addWidget(btn.get());
+
+    QPushButton* btn_ptr = btn.get();
+
+    btn_ptr->setStyleSheet(R"(
+QPushButton {
+    background-color: #d0d7de;   
+    color: #2c3e50;              
+    border: 1px solid #a0a6ab;   
+    border-radius: 8px;          
+    padding: 10px 18px;          
+    font-size: 24pt;             
+    font-weight: 500;            
+}
+    )");
+
+
+    QObject::connect(btn_ptr, &QPushButton::toggled, this, [btn_ptr](bool checked) {
+      if (checked) {
+        btn_ptr->setText("Checked");
+      }
+      else {
+        btn_ptr->setText("UnChecked");
+      }
+    });
     vec_btn_answer.push_back(std::move(btn));
   }
+
+
 }
 
 void WidgetControl::init_left() {
@@ -113,13 +145,51 @@ void WidgetControl::init_right() {
     label_SNR.setText("SNR:");
     layout_SNR.addWidget(&label_SNR);
 
-    edit_SNR.setText("0.0");
-    layout_SNR.addWidget(&edit_SNR);
-      
-    label_dB.setText("dB");
+    label_dB.setText("0.0 dB");
     layout_SNR.addWidget(&label_dB);
 
     layout_right.addLayout(&layout_SNR);
+
+    label_dB_clean.setText("0.0 dB");
+    btn_dB_clean_up.setText("Clean 1dB Up");
+    btn_dB_clean_down.setText("Clean 1dB Down");
+    layout_dB_clean.addWidget(&label_dB_clean);
+    layout_dB_clean.addWidget(&btn_dB_clean_up);
+    layout_dB_clean.addWidget(&btn_dB_clean_down);
+    layout_right.addLayout(&layout_dB_clean);
+    QObject::connect(&btn_dB_clean_up, &QPushButton::clicked, this, [&] {
+      dB_clean += 1.0;
+      label_dB_clean.setText(QString::number(dB_clean, 'f', 1) + "dB");
+      player->SetdBClean(dB_clean);
+      label_dB.setText(QString::number(dB_noise1 - dB_clean, 'f', 1) + "dB");
+      });
+    QObject::connect(&btn_dB_clean_down, &QPushButton::clicked, this, [&] {
+      dB_clean -= 1.0;
+      label_dB_clean.setText(QString::number(dB_clean, 'f', 1) + "dB");
+      player->SetdBClean(dB_clean);
+      label_dB.setText(QString::number(dB_noise1 - dB_clean, 'f', 1) + "dB");
+      });
+
+    label_dB_noise1.setText("0.0 dB");
+    btn_dB_noise1_up.setText("Noise 1dB Up");
+    btn_dB_noise1_down.setText("Noise 1dB Down");
+    layout_dB_noise1.addWidget(&label_dB_noise1);
+    layout_dB_noise1.addWidget(&btn_dB_noise1_up);
+    layout_dB_noise1.addWidget(&btn_dB_noise1_down);
+    layout_right.addLayout(&layout_dB_noise1);
+    QObject::connect(&btn_dB_noise1_up, &QPushButton::clicked, this, [&] {
+      dB_noise1 += 1.0;
+      label_dB_noise1.setText(QString::number(dB_noise1, 'f', 1) + "dB");
+      player->SetdBNoise1(dB_noise1);
+      label_dB.setText(QString::number(dB_noise1 - dB_clean, 'f', 1) + "dB");
+      });
+    QObject::connect(&btn_dB_noise1_down, &QPushButton::clicked, this, [&] {
+      dB_noise1 -= 1.0;
+      label_dB_noise1.setText(QString::number(dB_noise1, 'f', 1) + "dB");
+      player->SetdBNoise1(dB_noise1);
+      label_dB.setText(QString::number(dB_noise1 - dB_clean, 'f', 1) + "dB");
+      });
+
 
     btn_tune.setText("Play Tune");
     layout_tune.addWidget(&btn_tune);
@@ -167,6 +237,23 @@ int WidgetControl::listing_noise() {
 
   return wavFiles.size();
   
+}
+
+void WidgetControl::EnableControl(bool flag) {
+  for (auto& btn : vec_btn_answer) {
+    btn->setEnabled(flag);
+  }
+  btn_select_all.setEnabled(flag);
+  btn_next.setEnabled(flag);
+  combo_L.setEnabled(flag);
+  combo_noise.setEnabled(flag);
+  btn_tmp_clean.setEnabled(flag);
+  btn_play.setEnabled(flag);
+  btn_dB_clean_down.setEnabled(flag);
+  btn_dB_clean_up.setEnabled(flag);
+  btn_dB_noise1_down.setEnabled(flag);
+  btn_dB_noise1_up.setEnabled(flag);
+  btn_tune.setEnabled(flag);
 }
 
 

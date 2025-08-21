@@ -13,7 +13,11 @@ app::app(){
     layout_main.addWidget(&widget_main);
   }
 
-  setMinimumSize(960,480);
+  label_status.setText("Initialized");
+  label_status.setAlignment(Qt::AlignRight);
+  layout_main.addWidget(&label_status);
+
+  setMinimumSize(960,640);
   setLayout(&layout_main);
 
   player = new Player();
@@ -54,9 +58,27 @@ app::~app() {
 
  }
 
+ void app::enable_control(bool flag) {
+
+   widget_control.EnableControl(flag);
+ 
+
+ }
+
  void app::RefreshPlayer() {
    player->Off();
    setProcParam();
-   player->On();
+
+   if (player->On()) {
+     QMessageBox::critical(this, "Error", QString("Failed to open stream. Please check the console log."), QMessageBox::Ok);
+     is_player_on = false;
+     label_status.setText("Failed to open stream");
+   }
+   else {
+     is_player_on = true;
+     label_status.setText("Stream opened.");
+   }
+     enable_control(is_player_on);
+
  }
 

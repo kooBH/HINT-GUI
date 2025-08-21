@@ -30,6 +30,10 @@ private:
   WidgetConfig widget_config;
   WidgetControl widget_control;
 
+  QLabel label_status;
+
+  bool is_player_on = false;
+
   bool is_playing = false;
 
   //template <typename T>
@@ -37,6 +41,7 @@ private:
   double get(QString, string);
 
   void setProcParam();
+  void enable_control(bool);
 
 public:
 
@@ -48,4 +53,5 @@ public slots:
 
 
 signals:
+  
 };

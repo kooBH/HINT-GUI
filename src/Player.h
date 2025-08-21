@@ -42,6 +42,12 @@ private:
   QString path_clean;
   QString path_noise1;
 
+  double dB_clean = 0.0;
+  double dB_noise1 = 0.0;
+
+  double scale_clean = 1.0;
+  double scale_noise1 = 1.0;
+
 
   std::atomic<bool> flag_tune_play;
   short* buf_tune = nullptr;
@@ -61,6 +67,9 @@ public:
 
   void PlayClean();
   void PlayNoise1();
+
+  void SetdBClean(double dB);
+  void SetdBNoise1(double dB);
 
   void SetCleanPath(QString path);
 
