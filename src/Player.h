@@ -18,7 +18,11 @@ class Player : public QObject {
 private:
 
   int in_channels = 1;
-  int out_channels = 1;
+  int out_channels = 2;
+
+  int clean_channel_idx = 0;
+  int noise_channel_idx = 1;
+  int tune_channel_idx = 0;
 
   int sr_in = 16000;
   int sr_out = 16000;
@@ -29,34 +33,46 @@ private:
 
   bool isRunning = false;
 
-  RtOutput* stream_clean = nullptr;
-  RtOutput* stream_noise1 = nullptr;
-  RtOutput* stream_noise2 = nullptr;
-  WAV* wav_input = nullptr;
-  WAV* wav_noise1 = nullptr;
+  RtOutput* stream_1 = nullptr;
+  RtOutput* stream_2 = nullptr;
 
-  short* buf_in = nullptr;
-  std::atomic<bool> flag_noise1_play;
-  short* buf_noise1 = nullptr;
+  short* buf_clean = nullptr;
+  short* buf_noise = nullptr;
+  short* buf_out = nullptr;
 
   QString path_clean;
-  QString path_noise1;
+  QString path_noise;
 
   double dB_clean = 0.0;
-  double dB_noise1 = 0.0;
+  double dB_noise = 0.0;
 
   double scale_clean = 1.0;
-  double scale_noise1 = 1.0;
+  double scale_noise = 1.0;
 
+  // atomic to control on/off
+  std::atomic<bool> flag_play;
+  std::atomic<bool> flag_clean_play;
+  std::atomic<bool> flag_noise_play;
 
+  // atmoic to gurantee only one thread.
+  std::atomic_flag flag_clean_running = ATOMIC_FLAG_INIT;
+  std::atomic_flag flag_noise_running = ATOMIC_FLAG_INIT;
+  std::atomic_flag flag_play_running = ATOMIC_FLAG_INIT;
   std::atomic<bool> flag_tune_play;
-  short* buf_tune = nullptr;
+
+  // atomic to manage access to buffer
+  std::atomic<int> cnt_req;
+  std::atomic<int> n_req;
+  std::atomic_flag flag_buffer = ATOMIC_FLAG_INIT;
+  std::atomic<bool> req_clean;
+  std::atomic<bool> req_noise;
 
 
 public:
-  int device_clean = 4;
-  int device_noise1 = 4;
-  int device_noise2 = 4;
+  int device_1 = 4;
+  int device_2 = 8;
+  QString device_name_1;
+  QString device_name_2;
 
   Player();
   ~Player();
@@ -65,15 +81,25 @@ public:
   void Off();
   void PlayTune();
 
-  void PlayClean();
-  void PlayNoise1();
+  void Play();
+  void Stop();
 
   void SetdBClean(double dB);
   void SetdBNoise1(double dB);
 
-  void SetCleanPath(QString path);
+  void SetCleanIndex(int idx);
+  void SetNoiseIndex(int idx);
+  void SetTuneIndex(int idx);
+
+  bool IsStreamPlaying();
+  bool IsNoisePlaying();
+
 
 public slots :
-  void SetNoise1Path(QString path);
+  void SetNoisePath(QString path);
+  void SetCleanPath(QString path);
+
+  void InsertClean();
+  void LoopNoise();
 
 };

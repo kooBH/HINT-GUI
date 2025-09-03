@@ -17,7 +17,7 @@ app::app(){
   label_status.setAlignment(Qt::AlignRight);
   layout_main.addWidget(&label_status);
 
-  setMinimumSize(960,640);
+  setMinimumSize(1280,640);
   setLayout(&layout_main);
 
   player = new Player();
@@ -52,22 +52,18 @@ app::~app() {
  }
 
  void app::setProcParam() {
-   player->device_clean = static_cast<int>(get("Input/Output", "clean_speaker"));
-   player->device_noise1 = static_cast<int>(get("Input/Output", "noise1_speaker"));
-   player->device_noise2 = static_cast<int>(get("Input/Output", "noise2_speaker"));
+   player->device_1= static_cast<int>(get("Input/Output", "clean_speaker"));
 
  }
 
  void app::enable_control(bool flag) {
-
    widget_control.EnableControl(flag);
- 
-
  }
 
  void app::RefreshPlayer() {
    player->Off();
    setProcParam();
+   widget_control.ApplyPath();
 
    if (player->On()) {
      QMessageBox::critical(this, "Error", QString("Failed to open stream. Please check the console log."), QMessageBox::Ok);
