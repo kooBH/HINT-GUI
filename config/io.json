@@ -1,26 +1,6 @@
 {
-    "clean_speaker": {
+    "device_1": {
         "type": "int",
-        "value": 6
-    },
-    "input_channels": {
-        "type": "int",
-        "value": 2
-    },
-    "noise1_speaker": {
-        "type": "int",
-        "value": 0
-    },
-    "noise2_speaker": {
-        "type": "int",
-        "value": 4
-    },
-    "samplerate": {
-        "options": [
-            16000,
-            48000
-        ],
-        "type": "option",
-        "value": 48000
+        "value": 5
     }
 }

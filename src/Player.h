@@ -94,12 +94,14 @@ public:
   bool IsStreamPlaying();
   bool IsNoisePlaying();
 
-
 public slots :
   void SetNoisePath(QString path);
   void SetCleanPath(QString path);
 
   void InsertClean();
   void LoopNoise();
+
+signals :
+  void SignalUpdateDevice1Name(QString name);
 
 };

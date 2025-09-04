@@ -32,6 +32,8 @@ int Player::On() {
       printf("device : %d\n", device_1);
       printf("out channels  : %d\n", out_channels);
 
+      emit(SignalUpdateDevice1Name(QString::fromStdString(stream_1->GetDeviceName(device_1))));
+
       ret = stream_1->PrepStream();
 
       if (ret) {
@@ -275,3 +277,4 @@ bool Player::IsStreamPlaying() {
 bool Player::IsNoisePlaying() {
   return flag_noise_play.load();
 }
+

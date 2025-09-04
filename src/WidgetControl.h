@@ -31,6 +31,8 @@ class WidgetControl : public QWidget{
 private:
   Player* player = nullptr;
   QVBoxLayout layout_main;
+
+  bool is_playing = false;
   
   //--- Toolbar & file selection ---//
   QHBoxLayout layout_toolbar;
@@ -149,6 +151,9 @@ public:
   void ConnectPlayer(Player* p);
   void EnableControl(bool flag);
   void ApplyPath();
+
+public slots:
+  void SLotUpdateDevice1Name(QString name);
 
 signals :
   void Play(QString path);

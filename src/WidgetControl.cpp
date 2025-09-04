@@ -48,6 +48,14 @@ void WidgetControl::init_toolbar() {
   for (int i = 1; i <= 14; i++) {
     combo_L.addItem(QString::number(i));
   }
+
+  combo_L.setStyleSheet(R"(
+        QComboBox:disabled {
+            background-color: #d3d3d3; /* 배경색을 연한 회색으로 */
+            color: #808080; /* 글자색을 회색으로 */
+            border: 1px solid #a0a0a0; /* 테두리를 좀 더 어둡게 */
+        })");
+
   layout_toolbar.addWidget(&combo_L);
   
   label_clean_pre.setText("Clean: ");
@@ -67,8 +75,8 @@ void WidgetControl::init_toolbar() {
   listing_noise();
   layout_toolbar.addWidget(&combo_noise);
   
-  btn_tmp_clean.setText("[TEST]Play Clean");
-  layout_toolbar.addWidget(&btn_tmp_clean);
+  //btn_tmp_clean.setText("[TEST]Play Clean");
+  //layout_toolbar.addWidget(&btn_tmp_clean);
 
   btn_play.setText("Play");
   layout_toolbar.addWidget(&btn_play);
@@ -77,9 +85,11 @@ void WidgetControl::init_toolbar() {
     player->Play();
     player->InsertClean(); });
   QObject::connect(&btn_play, &QPushButton::clicked, this, [&] {
-    if (player->IsStreamPlaying()) {
+    if (is_playing) {
       player->Stop();
       btn_play.setText("Play");
+      is_playing = false;
+      EnableControl(false);
 
     }
     else {
@@ -87,11 +97,16 @@ void WidgetControl::init_toolbar() {
       player->LoopNoise();
       player->InsertClean();
       btn_play.setText("Stop");
+      is_playing = true;
+      EnableControl(true);
+      update_score();
     }
     
     });
   QObject::connect(&combo_L, &QComboBox::currentIndexChanged, this, [this](int index) {
     select_clean_L(index);
+    this->update_answer();
+    this->update_score();
     });
   QObject::connect(&combo_noise, &QComboBox::currentIndexChanged, this, [this](int index) {
     path_noise = vec_noise[index].second;
@@ -241,6 +256,7 @@ void WidgetControl::init_device() {
     layout_device.addWidget(&label_device_1);
     layout_device.addWidget(&label_device_2);
 
+
     // Clean
     label_device_clean.setText("Clean  ");
     layout_device_clean.setAlignment(Qt::AlignLeft);
@@ -300,6 +316,8 @@ void WidgetControl::ConnectPlayer(Player* p) {
 
   player->SetCleanPath(path_clean);
   player->SetNoisePath(path_noise);
+
+  QObject::connect(player, &Player::SignalUpdateDevice1Name, this, &WidgetControl::SLotUpdateDevice1Name);
 }
 
 int WidgetControl::listing_clean() {
@@ -354,7 +372,6 @@ int WidgetControl::listing_noise() {
 void WidgetControl::select_clean_L(int idx) {
   label_clean_cnt.setText("1/" + QString::number(n_S));
   btn_next.setText("Next");
-  btn_next.setEnabled(true);
   cur_l = idx;
 
   //shuffle vector
@@ -466,15 +483,15 @@ void WidgetControl::EnableControl(bool flag) {
   }
   btn_select_all.setEnabled(flag);
   btn_next.setEnabled(flag);
-  combo_L.setEnabled(flag);
-  combo_noise.setEnabled(flag);
-  btn_tmp_clean.setEnabled(flag);
-  btn_play.setEnabled(flag);
-  btn_dB_clean_down.setEnabled(flag);
-  btn_dB_clean_up.setEnabled(flag);
-  btn_dB_noise1_down.setEnabled(flag);
-  btn_dB_noise1_up.setEnabled(flag);
-  btn_tune.setEnabled(flag);
+  combo_L.setEnabled(!flag);
+  //combo_noise.setEnabled(flag);
+  //btn_tmp_clean.setEnabled(flag);
+  //btn_play.setEnabled(flag);
+  btn_tune.setEnabled(!flag);
+  //btn_dB_clean_down.setEnabled(flag);
+  //btn_dB_clean_up.setEnabled(flag);
+  //btn_dB_noise1_down.setEnabled(flag);
+  //btn_dB_noise1_up.setEnabled(flag);
 }
 
 
@@ -553,3 +570,9 @@ void WidgetControl::slot_noise_radio_clicked(QAbstractButton* btn) {
     }
   }
 }
+
+void WidgetControl::SLotUpdateDevice1Name(QString name) {
+    label_device_1.setText("Device1 : " + name);
+}
+
+

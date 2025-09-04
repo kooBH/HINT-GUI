@@ -9,7 +9,7 @@ app::app(){
     widget_main.addTab(&widget_control, "Control");
     widget_main.addTab(&widget_config, "Device");
 
-    widget_config.Add("Input/Output", "../config/io.json");
+    widget_config.Add("Config", "../config/io.json");
     layout_main.addWidget(&widget_main);
   }
 
@@ -24,6 +24,7 @@ app::app(){
   widget_control.ConnectPlayer(player);
 
   RefreshPlayer();
+  widget_control.EnableControl(false);
 
   QObject::connect(widget_config.GetButtonApply(), &QPushButton::clicked, this, &app::RefreshPlayer);
 };
@@ -52,7 +53,7 @@ app::~app() {
  }
 
  void app::setProcParam() {
-   player->device_1= static_cast<int>(get("Input/Output", "clean_speaker"));
+   player->device_1= static_cast<int>(get("Config", "device_1"));
 
  }
 
